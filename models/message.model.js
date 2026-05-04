@@ -9,6 +9,9 @@ const messageModel = new mongoose.Schema({
     message: String,
     images: Array,
     hasImages: Boolean,
+    audio: String,
+    hasAudio: Boolean,
+    audioDuration: Number,
 },
     {
         timestamps: true,

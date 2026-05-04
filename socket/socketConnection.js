@@ -27,7 +27,7 @@ export default function socketConnection(server) {
 
 
         // recieve message from user 
-        socket.on('send-message', async ({ from, message, to, userName, userImage, hasImages, images }) => {
+        socket.on('send-message', async ({ from, message, to, userName, userImage, hasImages, images , audio , hasAudio , audioDuration}) => {
             try {
                 let conversation;
 
@@ -47,7 +47,7 @@ export default function socketConnection(server) {
 
                     const conversationCreated = await Conversation.create({
                         participants: [from, to],
-                        lastMessage: message || images.length > 0 && `📷 ${images.length} images`,
+                        lastMessage: message || images.length > 0 && `📷 ${images.length} images` || hasAudio && '🎤 Voice message',
                         lastSender: from,
                         seenBy: [from],
                     })
@@ -63,7 +63,7 @@ export default function socketConnection(server) {
                 } else {
                     await Conversation.findByIdAndUpdate(conversation._id, {
                         $set: {
-                            lastMessage: message || images.length > 0 && `📷 ${images.length} images`,
+                            lastMessage: message || images.length > 0 && `📷 ${images.length} images` || hasAudio && '🎤 Voice message',
                             lastSender: from,
                             seenBy: [from],
                         }
@@ -77,6 +77,9 @@ export default function socketConnection(server) {
                     message: message || '',
                     hasImages,
                     images,
+                    audio,
+                    hasAudio,
+                    audioDuration
                 })
 
 
@@ -93,6 +96,9 @@ export default function socketConnection(server) {
                         message: message || '',
                         hasImages,
                         images,
+                        audio,
+                        hasAudio,
+                        audioDuration,
                         createdAt: result.createdAt,
                         messageId: result._id,
                         userImage,
