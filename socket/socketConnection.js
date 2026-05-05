@@ -118,6 +118,8 @@ export default function socketConnection(server) {
         })
 
 
+
+
         // changge the status of the message to seen
         socket.on('seen-by', async ({ conversationId, userEmail, remoteUserEmail }) => {
             // save to the server that the message has seened
@@ -139,6 +141,46 @@ export default function socketConnection(server) {
             }
         })
 
+
+
+        // handle ice candidate for webrtc
+        socket.on('send-candidate', async ({ candidate, to, from }) => {
+            const recieverSocketId = activeUsers[to];
+            if (recieverSocketId) {
+                socket.to(recieverSocketId).emit('receive-candidate', {
+                    candidate,
+                    from
+                })
+            }
+        })
+
+
+        // handle get offer and emit to remote user
+        socket.on('send-offer', async ({ offer, to, type, from }) => {
+            const recieverSocketId = activeUsers[to];
+
+            if (recieverSocketId) {
+                socket.to(recieverSocketId).emit('receive-offer', {
+                    offer,
+                    from,
+                    type
+                })
+            }
+        })
+
+
+
+        // handle get answers and emit to first user
+        socket.on('send-answer', async ({ answer, to, from }) => {
+            const recieverSocketId = activeUsers[to];
+
+            if (recieverSocketId) {
+                socket.to(recieverSocketId).emit('receive-answer', {
+                    answer,
+                    from
+                })
+            }
+        })
 
         // disconnect event
         socket.on("disconnect", () => {
