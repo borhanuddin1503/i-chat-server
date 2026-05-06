@@ -182,6 +182,17 @@ export default function socketConnection(server) {
             }
         })
 
+
+        // handle end call
+        socket.on('end-call', async ({ to, from }) => {
+            const recieverId = activeUsers[to];
+            if (recieverId) {
+                socket.to(recieverId).emit('call-ended', {
+                    from,
+                })
+            }
+        })
+
         // disconnect event
         socket.on("disconnect", () => {
             const email = Object.keys(activeUsers).find(
