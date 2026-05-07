@@ -143,6 +143,28 @@ export default function socketConnection(server) {
 
 
 
+        // handle incomming call
+        socket.on('create-call', async ({ to, from, type }) => {
+            const recieverSocketId = activeUsers[to];
+            if (recieverSocketId) {
+                socket.to(recieverSocketId).emit('incoming-call', {
+                    from,
+                    type
+                })
+            }
+        })
+
+
+        // handle call response
+        socket.on('call-response', async ({ to, callRecieved, callType }) => {
+            const recieverSocketId = activeUsers[to];
+            socket.to(recieverSocketId).emit('call-responded', {
+                callRecieved,
+                callType
+            })
+        })
+
+
         // handle ice candidate for webrtc
         socket.on('send-candidate', async ({ candidate, to, from }) => {
             const recieverSocketId = activeUsers[to];
