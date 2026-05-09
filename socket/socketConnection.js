@@ -142,6 +142,26 @@ export default function socketConnection(server) {
         })
 
 
+        // handle typing indicator
+        socket.on('typing', ({ to, from }) => {
+            const receiverSocketId = activeUsers[to];
+            if (receiverSocketId) {
+                socket.to(receiverSocketId).emit('typing', {
+                    from
+                })
+            }
+        })
+
+        // handle typing indicator
+        socket.on('stop-typing', ({ to, from }) => {
+            const receiverSocketId = activeUsers[to];
+            if (receiverSocketId) {
+                socket.to(receiverSocketId).emit('stop-typing', {
+                    from
+                })
+            }
+        })
+
 
         // handle incomming call
         socket.on('create-call', async ({ to, from, type }) => {
@@ -214,6 +234,10 @@ export default function socketConnection(server) {
                 })
             }
         })
+
+
+
+
 
         // disconnect event
         socket.on("disconnect", () => {
