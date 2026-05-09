@@ -59,7 +59,7 @@ export const getUsers = async (req, res) => {
         }
 
         if (Object.keys(query).length !== 0) {
-            const user = await User.findOne(query, { name: 1, email: 1, image: 1, role: 1, _id: 1 });
+            const user = await User.findOne(query, { name: 1, email: 1, image: 1, role: 1, _id: 1, createdAt: 1 });
             return res.status(200).send({
                 isSuccess: true,
                 user,
@@ -198,4 +198,75 @@ export const SearchUsers = async (req, res) => {
             message: error.message
         })
     }
-}   
+}
+
+
+
+
+export const updateInfo = async (req, res) => {
+
+    const { id } = req.params;
+    const body = req.body;
+
+    const name = body?.name;
+    const image = body?.image;
+
+    const email = req.decodedEmail;
+
+    try {
+
+        // find user
+        const user = await User.findById(id);
+
+        // user not found
+        if (!user) {
+            return res.status(404).send({
+                isSuccess: false,
+                message: 'User not found'
+            });
+        }
+
+        // verify ownership
+        if (user.email !== email) {
+            return res.status(403).send({
+                isSuccess: false,
+                message: 'Forbidden access'
+            });
+        }
+
+        const updatedData = {};
+
+        if (name) {
+            updatedData.name = name;
+        }
+
+        if (image) {
+            updatedData.image = image;
+        }
+
+        // update
+        const result = await User.findByIdAndUpdate(
+            id,
+            {
+                $set: updatedData
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        return res.status(200).send({
+            isSuccess: true,
+            result
+        });
+
+    } catch (error) {
+
+        return res.status(500).send({
+            isSuccess: false,
+            message: error.message
+        });
+
+    }
+};
