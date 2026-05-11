@@ -21,7 +21,11 @@ export default function socketConnection(server) {
         socket.on("connected", ({ email }) => {
             console.log(email, 'connected');
             activeUsers[email] = socket.id
-            socket.emit('connection_msg', `Congratulations your socket id is: ${socket.id}`)
+            socket.emit('connection_msg', `Congratulations your socket id is: ${socket.id}`);
+            socket.emit('activeUsers', { activeUsers });
+            io.emit('user-active', {
+                email
+            })
             console.log(activeUsers)
         })
 
@@ -247,6 +251,9 @@ export default function socketConnection(server) {
 
             if (email) {
                 delete activeUsers[email];
+                io.emit('user-inAactive', {
+                    email
+                })
             }
 
             console.log("disconnected user", socket.id);
