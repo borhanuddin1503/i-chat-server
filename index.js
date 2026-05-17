@@ -7,6 +7,7 @@ import MessageRoutes from './routes/message.routes.js'
 import { createServer } from "http";
 import dotenv from 'dotenv';
 import socketConnection from './socket/socketConnection.js';
+import turnCredentialsRoute from './routes/turnCredentials.route.js';
 dotenv.config();
 
 
@@ -34,6 +35,7 @@ await DBConnect();
 app.use('/user', UserRoutes);
 app.use('/conversation', ConversaitonRoutes);
 app.use('/message', MessageRoutes);
+app.use('/turn-credentials', turnCredentialsRoute);
 
 
 app.get('/', (req, res) => {

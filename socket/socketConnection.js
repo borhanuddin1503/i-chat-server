@@ -110,7 +110,7 @@ export default function socketConnection(server) {
                         hasAudio,
                         audioDuration,
                         createdAt: result.createdAt,
-                        messageId: result._id,
+                        _id: result._id,
                         userImage,
                         userName
                     })
