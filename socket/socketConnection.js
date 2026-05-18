@@ -16,7 +16,7 @@ export default function socketConnection(server) {
 
 
     io.on("connection", (socket) => {
-        console.log('socket from server', socket.id);
+        console.log('socket from server', socket.id); 
 
         // connected event 
         socket.on("connected", ({ email }) => {
