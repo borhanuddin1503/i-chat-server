@@ -7,7 +7,8 @@ export default function socketConnection(server) {
     const io = new Server(server, {
         cors: {
             origin: '*'
-        }
+        },
+        transports: ['websocket', 'polling']
     });
 
 
